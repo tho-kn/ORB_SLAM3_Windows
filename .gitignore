@@ -4,3 +4,4 @@
 .vs
 x64
 Datasets/*
+Vocabulary/ORBvoc.txt
