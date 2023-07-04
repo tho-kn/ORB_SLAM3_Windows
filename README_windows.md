@@ -1,9 +1,92 @@
-# ORB-SLAM3
+# ORB_SLAM3_Windows
+Windows version of ORB-SLAM3 with some slight updates. Please refer to original website for details: https://github.com/UZ-SLAMLab/ORB_SLAM3
 
-### V1.0, December 22th, 2021
+Tested under Windows 10 Pro, Visual Studio 2019 Community. I started from Visual Studio 2015 but met many "fatal error C1060: compiler is out of heap space" when building. Those errors are solved by switch to VS2019.
+
+For easy to use, I put all the resources except for datasets into a folder and organize them as a single Visual Studio project.
+
+### Program arguments
+
+Usage: slam.exe testName testArguments
+
+Available tests as the following...
+
+Monocular examples:
+```
+mono_euroc path_to_vocabulary path_to_settings path_to_sequence_folder_1 path_to_times_file_1 (path_to_image_folder_2 path_to_times_file_2 ... path_to_image_folder_N path_to_times_file_N) (trajectory_file_name)
+mono_kitti path_to_vocabulary path_to_settings path_to_sequence
+mono_tum path_to_vocabulary path_to_settings path_to_sequence
+mono_tum_vi path_to_vocabulary path_to_settings path_to_image_folder_1 path_to_times_file_1 (path_to_image_folder_2 path_to_times_file_2 ... path_to_image_folder_N path_to_times_file_N) (trajectory_file_name)
+```
+
+Monocular-Inertial examples:
+```
+mono_inertial_euroc path_to_vocabulary path_to_settings path_to_sequence_folder_1 path_to_times_file_1 (path_to_image_folder_2 path_to_times_file_2 ... path_to_image_folder_N path_to_times_file_N)
+mono_inertial_tum_vi path_to_vocabulary path_to_settings path_to_image_folder_1 path_to_times_file_1 path_to_imu_data_1 (path_to_image_folder_2 path_to_times_file_2 path_to_imu_data_2 ... path_to_image_folder_N path_to_times_file_N path_to_imu_data_N) (trajectory_file_name)
+```
+
+RGB-D:
+```
+rgbd_tum path_to_vocabulary path_to_settings path_to_sequence path_to_association
+```
+
+Stereo:
+```
+stereo_euroc path_to_vocabulary path_to_settings path_to_sequence_folder_1 path_to_times_file_1 (path_to_image_folder_2 path_to_times_file_2 ... path_to_image_folder_N path_to_times_file_N) (trajectory_file_name)
+stereo_kitti path_to_vocabulary path_to_settings path_to_sequence
+stereo_tum_vi path_to_vocabulary path_to_settings path_to_image_folder1_1 path_to_image_folder2_1 path_to_times_file_1 (path_to_image_folder1_2 path_to_image_folder2_2 path_to_times_file_2 ... path_to_image_folder1_N path_to_image_folder2_N path_to_times_file_N) (trajectory_file_name)
+```
+
+Stereo-Inertial:
+```
+stereo_inertial_euroc path_to_vocabulary path_to_settings path_to_sequence_folder_1 path_to_times_file_1 (path_to_image_folder_2 path_to_times_file_2 ... path_to_image_folder_N path_to_times_file_N)
+stereo_inertial_tum_vi path_to_vocabulary path_to_settings path_to_image_folder_1 path_to_image_folder_2 path_to_times_file path_to_imu_data (trajectory_file_name)
+```
+
+### Example scripts
+Please point "pathDatasetEuroc" to your datasets before run the scripts.
+```
+set pathDatasetEuroc=YOUR_DATASET_PATH
+```
+
+Available example scripts
+```
+euroc_examples.bat      : Run all EuRoC examples and save result and log files to ./log
+euroc_examples_1.bat    : Run a single EuRoC test and display log information to Command Prompt
+kitti_examples.bat      : Run all KITTI examples and save result and log files to ./log
+kitti_examples_1.bat    : Run a single KITTI test and display log information to Command Prompt
+tum_vi_examples.bat     : Run all TUM-VI examples and save result and log files to ./log
+tum_vi_examples_1.bat   : Run a single TUM-VI test and display log information to Command Prompt
+```
+
+Available evaluation scripts
+```
+euroc_eval_examples.bat
+euroc_eval_examples_1.bat
+tum_vi_eval_examples.bat
+```
+
+### Notes
+
+1. Add a global.h to provide some controls over entire project.
+
+2. Reading "ORBvoc.txt" in binary format to speed-up since it seems slowly on Windows. Please comment the macro "USE_BINARY_VOC" out (global.h) to reading it from a txt file.
+
+3. Eigen version is 3.3.7
+
+4. OpenCV version is 3.2.0 and its DLLs are put into target folder directly (./x64/Debug).
+
+5. Several small cross-platform modifications (search for _WINDOWS).
+
+6. Boost library related contents are removed temporarily.
+
+
+======================================================================
+
+The following copied from original website: https://github.com/UZ-SLAMLab/ORB_SLAM3
+
+### V0.3: Beta version, 7 Aug 2020
 **Authors:** Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, [José M. M. Montiel](http://webdiis.unizar.es/~josemari/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/).
-
-The [Changelog](https://github.com/UZ-SLAMLab/ORB_SLAM3/blob/master/Changelog.md) describes the features of each version.
 
 ORB-SLAM3 is the first real-time SLAM library able to perform **Visual, Visual-Inertial and Multi-Map SLAM** with **monocular, stereo and RGB-D** cameras, using **pin-hole and fisheye** lens models. In all sensor configurations, ORB-SLAM3 is as robust as the best systems available in the literature, and significantly more accurate. 
 
@@ -16,7 +99,7 @@ alt="ORB-SLAM3" width="240" height="180" border="10" /></a>
 
 ### Related Publications:
 
-[ORB-SLAM3] Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, José M. M. Montiel and Juan D. Tardós, **ORB-SLAM3: An Accurate Open-Source Library for Visual, Visual-Inertial and Multi-Map SLAM**, *IEEE Transactions on Robotics 37(6):1874-1890, Dec. 2021*. **[PDF](https://arxiv.org/abs/2007.11898)**.
+[ORB-SLAM3] Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, José M. M. Montiel and Juan D. Tardós, **ORB-SLAM3: An Accurate Open-Source Library for Visual, Visual-Inertial and Multi-Map SLAM**, Under review. **[PDF](https://arxiv.org/pdf/2007.11898.pdf)**.
 
 [IMU-Initialization] Carlos Campos, J. M. M. Montiel and Juan D. Tardós, **Inertial-Only Optimization for Visual-Inertial Initialization**, *ICRA 2020*. **[PDF](https://arxiv.org/pdf/2003.05766.pdf)**
 
@@ -37,17 +120,14 @@ ORB-SLAM3 is released under [GPLv3 license](https://github.com/UZ-SLAMLab/ORB_SL
 For a closed-source version of ORB-SLAM3 for commercial purposes, please contact the authors: orbslam (at) unizar (dot) es.
 
 If you use ORB-SLAM3 in an academic work, please cite:
-  
-    @article{ORBSLAM3_TRO,
+
+    @article{ORBSLAM3_2020,
       title={{ORB-SLAM3}: An Accurate Open-Source Library for Visual, Visual-Inertial 
                and Multi-Map {SLAM}},
       author={Campos, Carlos AND Elvira, Richard AND G\´omez, Juan J. AND Montiel, 
               Jos\'e M. M. AND Tard\'os, Juan D.},
-      journal={IEEE Transactions on Robotics}, 
-      volume={37},
-      number={6},
-      pages={1874-1890},
-      year={2021}
+      journal={arXiv preprint arXiv:2007.11898},
+      year={2020}
      }
 
 # 2. Prerequisites
@@ -60,7 +140,7 @@ We use the new thread and chrono functionalities of C++11.
 We use [Pangolin](https://github.com/stevenlovegrove/Pangolin) for visualization and user interface. Dowload and install instructions can be found at: https://github.com/stevenlovegrove/Pangolin.
 
 ## OpenCV
-We use [OpenCV](http://opencv.org) to manipulate images and features. Dowload and install instructions can be found at: http://opencv.org. **Required at leat 3.0. Tested with OpenCV 3.2.0 and 4.4.0**.
+We use [OpenCV](http://opencv.org) to manipulate images and features. Dowload and install instructions can be found at: http://opencv.org. **Required at leat 3.0. Tested with OpenCV 3.2.0**.
 
 ## Eigen3
 Required by g2o (see below). Download and install instructions can be found at: http://eigen.tuxfamily.org. **Required at least 3.1.0**.
@@ -95,23 +175,7 @@ chmod +x build.sh
 
 This will create **libORB_SLAM3.so**  at *lib* folder and the executables in *Examples* folder.
 
-# 4. Running ORB-SLAM3 with your camera
-
-Directory `Examples` contains several demo programs and calibration files to run ORB-SLAM3 in all sensor configurations with Intel Realsense cameras T265 and D435i. The steps needed to use your own camera are: 
-
-1. Calibrate your camera following `Calibration_Tutorial.pdf` and write your calibration file `your_camera.yaml`
-
-2. Modify one of the provided demos to suit your specific camera model, and build it
-
-3. Connect the camera to your computer using USB3 or the appropriate interface
-
-4. Run ORB-SLAM3. For example, for our D435i camera, we would execute:
-
-```
-./Examples/Stereo-Inertial/stereo_inertial_realsense_D435i Vocabulary/ORBvoc.txt ./Examples/Stereo-Inertial/RealSense_D435i.yaml
-```
-
-# 5. EuRoC Examples
+# 4. EuRoC Examples
 [EuRoC dataset](http://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets) was recorded with two pinhole cameras and an inertial sensor. We provide an example script to launch EuRoC sequences in all the sensor configurations.
 
 1. Download a sequence (ASL format) from http://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets
@@ -131,7 +195,7 @@ Execute the following script to process sequences and compute the RMS ATE:
 ./euroc_eval_examples
 ```
 
-# 6. TUM-VI Examples
+# 5. TUM-VI Examples
 [TUM-VI dataset](https://vision.in.tum.de/data/datasets/visual-inertial-dataset) was recorded with two fisheye cameras and an inertial sensor.
 
 1. Download a sequence from https://vision.in.tum.de/data/datasets/visual-inertial-dataset and uncompress it.
@@ -151,7 +215,7 @@ Execute the following script to process sequences and compute the RMS ATE:
 ./tum_vi_eval_examples
 ```
 
-# 7. ROS Examples
+# 6. ROS Examples
 
 ### Building the nodes for mono, mono-inertial, stereo, stereo-inertial and RGB-D
 Tested with ROS Melodic and ubuntu 18.04.
@@ -227,9 +291,3 @@ Once ORB-SLAM3 has loaded the vocabulary, press space in the rosbag tab.
   ```
   rosrun rosbag fastrebag.py dataset-room1_512_16.bag dataset-room1_512_16_small_chunks.bag
   ```
-
-# 8. Running time analysis
-A flag in `include\Config.h` activates time measurements. It is necessary to uncomment the line `#define REGISTER_TIMES` to obtain the time stats of one execution which is shown at the terminal and stored in a text file(`ExecTimeMean.txt`).
-
-# 9. Calibration
-You can find a tutorial for visual-inertial calibration and a detailed description of the contents of valid configuration files at  `Calibration_Tutorial.pdf`
