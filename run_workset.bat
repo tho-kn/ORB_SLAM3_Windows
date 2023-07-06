@@ -27,11 +27,16 @@ if not exist "%newDir%\images\" (
     python %pathScript%\Video_to_Dataset.py %pathDatasetEgo%\%videoFile%.MP4 %resolution%
 )
 
-REM Apply mask using Apply_Mask.py script
-python %pathScript%\Apply_Mask.py %newDir%\images %newDir%\mask
+if not exist "%newDir%\masked_images\" (
+    REM Apply mask using Apply_Mask.py script
+    python %pathScript%\Apply_Mask.py %newDir%\images %newDir%\mask
+)
 
 REM Set new directory for masked images
 set newDirMaskedImages=%newDir%\masked_images
+if not exist "%newDirMaskedImages%\" (
+    set newDirMaskedImages=%newDir%\images
+)
 
 REM Execute SLAM with the new masked images directory
 %SLAM% mono_tum_vi Vocabulary/ORBvoc.txt %newDir%\Ego.yaml %newDirMaskedImages% %newDir%\timestamps.txt %videoFile%

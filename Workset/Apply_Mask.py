@@ -4,6 +4,7 @@ import argparse
 import natsort
 import tkinter as tk
 from tkinter import filedialog
+import numpy as np
 
 # Create argument parser
 parser = argparse.ArgumentParser(description='Apply mask to images.')
@@ -56,6 +57,14 @@ for image_file, mask_file in zip(image_files, mask_files):
 
     # Mask out area where mask is 255
     image[mask == 255] = 0
+
+    # Create a circular mask
+    circular_mask = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
+    circle_radius = int(0.45 * image.shape[1])  # 0.9/2 as we need radius from diameter
+    cv2.circle(circular_mask, (image.shape[1]//2, image.shape[0]//2), circle_radius, (255), thickness=-1)
+
+    # Apply circular mask to image
+    image[circular_mask == 0] = 0
 
     # Save the masked image
     cv2.imwrite(os.path.join(output_folder, image_file), image)
