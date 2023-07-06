@@ -36,12 +36,12 @@ def adjust_yaml_file(yaml_path, output_path, scale_factor):
         data = yaml.safe_load(stream)
 
     # Adjust parameters
-    data['Camera']['fx'] *= scale_factor
-    data['Camera']['fy'] *= scale_factor
-    data['Camera']['cx'] *= scale_factor
-    data['Camera']['cy'] *= scale_factor
-    data['Camera']['width'] = int(data['Camera']['width'] * scale_factor)
-    data['Camera']['height'] = int(data['Camera']['height'] * scale_factor)
+    data['Camera.fx'] *= scale_factor
+    data['Camera.fy'] *= scale_factor
+    data['Camera.cx'] *= scale_factor
+    data['Camera.cy'] *= scale_factor
+    data['Camera.width'] = int(data['Camera.width'] * scale_factor)
+    data['Camera.height'] = int(data['Camera.height'] * scale_factor)
 
     with open(output_path, 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
