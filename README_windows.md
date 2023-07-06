@@ -5,6 +5,8 @@ Tested under Windows 10 Pro, Visual Studio 2019 Community. I started from Visual
 
 For easy to use, I put all the resources except for datasets into a folder and organize them as a single Visual Studio project.
 
+Unzip Vocabulary/ORBvoc.zip before usage
+
 ### Program arguments
 
 Usage: slam.exe testName testArguments
