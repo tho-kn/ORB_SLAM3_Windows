@@ -5,6 +5,3 @@
 x64
 Datasets/*
 Vocabulary/ORBvoc.txt
-Workset/*
-!Workset/Video_to_Dataset.py
-!Workset/Ego.yaml

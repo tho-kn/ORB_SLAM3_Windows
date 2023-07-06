@@ -27,24 +27,41 @@ def get_creation_time(video_path):
             if "Creation date" in line:
                 creation_date_str = line.split(": ")[1]
                 creation_date = datetime.strptime(creation_date_str, '%Y-%m-%d %H:%M:%S')
-                timestamp_ns = int(creation_date.timestamp() * 1e9)
+                try:
+                    timestamp_ns = int(creation_date.timestamp() * 1e9)
+                except:
+                    print(f"Unable to convert creation date to timestamp: {creation_date_str}")
+                    return None
                 return timestamp_ns
         return None
 
-def adjust_yaml_file(yaml_path, output_path, scale_factor):
-    with open(yaml_path, 'r') as stream:
-        data = yaml.safe_load(stream)
+def adjust_yaml_file(input_path, output_path, scale_factor):
+    with open(input_path, 'r') as f:
+        lines = f.readlines()
 
-    # Adjust parameters
-    data['Camera.fx'] *= scale_factor
-    data['Camera.fy'] *= scale_factor
-    data['Camera.cx'] *= scale_factor
-    data['Camera.cy'] *= scale_factor
-    data['Camera.width'] = int(data['Camera.width'] * scale_factor)
-    data['Camera.height'] = int(data['Camera.height'] * scale_factor)
+    # Find and adjust the lines
+    for i, line in enumerate(lines):
+        trimmed_line = line.lstrip()
+        if trimmed_line.startswith('Camera.fx:'):
+            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
+            indent = line[:len(line) - len(trimmed_line)]
+            lines[i] = f'{indent}Camera.fx: {value}\n'
+        elif trimmed_line.startswith('Camera.fy:'):
+            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
+            indent = line[:len(line) - len(trimmed_line)]
+            lines[i] = f'{indent}Camera.fy: {value}\n'
+        elif trimmed_line.startswith('Camera.cx:'):
+            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
+            indent = line[:len(line) - len(trimmed_line)]
+            lines[i] = f'{indent}Camera.cx: {value}\n'
+        elif trimmed_line.startswith('Camera.cy:'):
+            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
+            indent = line[:len(line) - len(trimmed_line)]
+            lines[i] = f'{indent}Camera.cy: {value}\n'
 
-    with open(output_path, 'w') as outfile:
-        yaml.dump(data, outfile, default_flow_style=False)
+    # Write to a new yaml file
+    with open(output_path, 'w') as f:
+        f.writelines(lines)
 
 def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
     base_timestamp_ns = get_creation_time(video_path)
@@ -57,7 +74,7 @@ def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
         return
 
     video_name = os.path.basename(video_path).split(".")[0]
-    output_dir = os.path.join("./Workset", f"{video_name}_{output_resolution}")
+    output_dir = os.path.join("./Workset/Data", f"{video_name}_{output_resolution}")
     os.makedirs(output_dir, exist_ok=True)
 
     video = cv2.VideoCapture(video_path)
@@ -68,6 +85,11 @@ def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
 
     print("Original Video Dimension: ", int(width), 'x', int(height))
     print("FPS: ", fps)
+
+    # Adjust and copy the yaml file
+    yaml_file_path = "./Workset/Ego.yaml"
+    output_yaml_path = os.path.join(output_dir, "Ego.yaml")
+    adjust_yaml_file(yaml_file_path, output_yaml_path, output_resolution/3360)
 
     frame_number = 0
     timestamps = []
@@ -103,11 +125,6 @@ def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
     with open(timestamps_path, "w") as f:
         for timestamp in timestamps:
             f.write(f"{timestamp}\n")
-
-    # Adjust and copy the yaml file
-    yaml_file_path = "./Workset/Ego.yaml"
-    output_yaml_path = os.path.join(output_dir, "Ego.yaml")
-    adjust_yaml_file(yaml_file_path, output_yaml_path, output_resolution/3360)
 
     print(f"Saved frames, timestamps, and yaml to {output_dir}")
 
