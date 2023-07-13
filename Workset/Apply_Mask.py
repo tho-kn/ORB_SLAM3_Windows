@@ -40,7 +40,8 @@ mask_files = natsort.natsorted(os.listdir(args.mask_folder))
 
 # Check if both directories have same number of files
 if len(image_files) != len(mask_files):
-    raise ValueError("Number of image and mask files do not match!")
+    print("Number of image and mask files do not match!")
+    mask_files = ["" for _ in image_files]
 
 # Create an output directory for masked images if it does not exist
 output_folder = os.path.join(args.image_folder, "..", "masked_images")
@@ -50,13 +51,15 @@ os.makedirs(output_folder, exist_ok=True)
 for image_file, mask_file in zip(image_files, mask_files):
     # Load image and mask
     image = cv2.imread(os.path.join(args.image_folder, image_file))
-    mask = cv2.imread(os.path.join(args.mask_folder, mask_file), cv2.IMREAD_GRAYSCALE)
     
-    # Resize mask to fit image
-    mask = cv2.resize(mask, (image.shape[1], image.shape[0]))
+    if mask_file != "":
+        mask = cv2.imread(os.path.join(args.mask_folder, mask_file), cv2.IMREAD_GRAYSCALE)
+        
+        # Resize mask to fit image
+        mask = cv2.resize(mask, (image.shape[1], image.shape[0]))
 
-    # Mask out area where mask is 255
-    image[mask == 255] = 0
+        # Mask out area where mask is 255
+        image[mask == 255] = 0
 
     # Create a circular mask
     circular_mask = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)

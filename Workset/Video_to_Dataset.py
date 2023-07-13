@@ -7,7 +7,6 @@ from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-import yaml # pip install PyYAML
 
 def get_creation_time(video_path):
     parser = createParser(video_path)
@@ -35,34 +34,6 @@ def get_creation_time(video_path):
                 return timestamp_ns
         return None
 
-def adjust_yaml_file(input_path, output_path, scale_factor):
-    with open(input_path, 'r') as f:
-        lines = f.readlines()
-
-    # Find and adjust the lines
-    for i, line in enumerate(lines):
-        trimmed_line = line.lstrip()
-        if trimmed_line.startswith('Camera.fx:'):
-            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
-            indent = line[:len(line) - len(trimmed_line)]
-            lines[i] = f'{indent}Camera.fx: {value}\n'
-        elif trimmed_line.startswith('Camera.fy:'):
-            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
-            indent = line[:len(line) - len(trimmed_line)]
-            lines[i] = f'{indent}Camera.fy: {value}\n'
-        elif trimmed_line.startswith('Camera.cx:'):
-            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
-            indent = line[:len(line) - len(trimmed_line)]
-            lines[i] = f'{indent}Camera.cx: {value}\n'
-        elif trimmed_line.startswith('Camera.cy:'):
-            value = float(trimmed_line.split(':')[1].strip()) * scale_factor
-            indent = line[:len(line) - len(trimmed_line)]
-            lines[i] = f'{indent}Camera.cy: {value}\n'
-
-    # Write to a new yaml file
-    with open(output_path, 'w') as f:
-        f.writelines(lines)
-
 def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
     base_timestamp_ns = get_creation_time(video_path)
 
@@ -85,11 +56,6 @@ def video_to_frames(video_path, default_base_timestamp_ns, output_resolution):
 
     print("Original Video Dimension: ", int(width), 'x', int(height))
     print("FPS: ", fps)
-
-    # Adjust and copy the yaml file
-    yaml_file_path = "./Workset/Ego.yaml"
-    output_yaml_path = os.path.join(output_dir, "Ego.yaml")
-    adjust_yaml_file(yaml_file_path, output_yaml_path, output_resolution/3360)
 
     frame_number = 0
     timestamps = []
